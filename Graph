@@ -1,0 +1,64 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from ipywidgets import interact, widgets
+
+final_df = pd.read_csv('final_df.csv')
+
+
+def plot_size_comparison(hazardous=True, min_size=0, max_size=1000):
+    # Filter data based on the hazardous status and size range
+    df_filtered = final_df[
+        (final_df['is_potentially_hazardous_asteroid'] == hazardous) &
+        (final_df['meters.estimated_diameter_min'] >= min_size) &
+        (final_df['meters.estimated_diameter_max'] <= max_size)
+    ]
+    
+    # Creating the scatter plot
+    plt.figure(figsize=(12, 8))
+    scatter = sns.scatterplot(
+        x='meters.estimated_diameter_max',
+        y='relative_velocity_km/h',
+        size='meters.estimated_diameter_min',
+        hue='is_potentially_hazardous_asteroid',
+        style='is_potentially_hazardous_asteroid',
+        sizes=(20, 200),  # Marker size range for visibility
+        data=df_filtered,
+        palette='viridis',  # Color palette
+        alpha=0.7  # Point transparency
+    )
+    plt.title('Comparison of Asteroid Sizes vs. Velocity')
+    plt.xlabel('Maximum Diameter (meters)')
+    plt.ylabel('Velocity (km/h)')
+    plt.legend(title='Hazardous?')
+    plt.grid(True)
+    plt.show()
+
+
+# Example usage of the function with hypothetical parameters
+plot_size_comparison(hazardous=True, min_size=50, max_size=500)
+
+
+def speed_distribution(velocity_type='Histogram'):
+    # Check the input to decide the type of plot
+    plt.figure(figsize=(12, 6))
+    if velocity_type == 'Histogram':
+        sns.histplot(final_df['relative_velocity_km/h'], bins=30, kde=True, color='blue')
+        plt.title('Histogram of Asteroid Velocities')
+    elif velocity_type == 'Box Plot':
+        sns.boxplot(x=final_df['relative_velocity_km/h'], color='green')
+        plt.title('Box Plot of Asteroid Velocities')
+    
+    plt.xlabel('Velocity (km/h)')
+    plt.ylabel('Frequency' if velocity_type == 'Histogram' else 'Value')
+    plt.grid(True)
+    plt.show()
+
+
+# To display a histogram of the speeds
+speed_distribution(velocity_type='Histogram')
+
+# To display a box plot of the speeds
+speed_distribution(velocity_type='Box Plot')
+
+# Should use ipywidgets to add more filters and interactive elements
