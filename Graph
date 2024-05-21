@@ -3,8 +3,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from ipywidgets import interact, widgets
 
-fina = pd.read_csv('final_df.csv')
-
 from nasa import final_df, get_dataframe
 
 
