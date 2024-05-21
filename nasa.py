@@ -120,4 +120,3 @@ final_df.head().style
 
 def get_dataframe():
     return final_df
-
