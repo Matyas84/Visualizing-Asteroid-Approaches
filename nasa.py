@@ -3,8 +3,8 @@
 
 # In[1]:
 
-
-get_ipython().run_line_magic('matplotlib', 'inline')
+import matplotlib.pyplot as plt
+plt.ion()
 import matplotlib.pyplot as plt
 
 import requests
