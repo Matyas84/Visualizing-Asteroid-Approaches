@@ -3,7 +3,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from ipywidgets import interact, widgets
 
-final_df = pd.read_csv('final_df.csv')
+fina = pd.read_csv('final_df.csv')
+
+from nasa import final_df, get_dataframe
 
 
 def plot_size_comparison(hazardous=True, min_size=0, max_size=1000):
