@@ -6,7 +6,7 @@ from ipywidgets import interact, widgets
 final_df = pd.read_csv('final_df.csv')
 
 
-def plot_size_comparison(min_size=0, max_size=1000):
+def plot_size_comparison(min_size, max_size):
     # Filter data based on the hazardous status and size range
     df_filtered = final_df[
         (final_df['meters.estimated_diameter_min'] >= min_size) &
@@ -16,7 +16,7 @@ def plot_size_comparison(min_size=0, max_size=1000):
     # Creating the scatter plot
     plt.figure(figsize=(12, 8))
     scatter = sns.scatterplot(
-        x='meters.estimated_diameter_max',
+        x='absolute_magnitude_h',
         y='relative_velocity_km/h',
         size='meters.estimated_diameter_min',
         hue='is_potentially_hazardous_asteroid',
@@ -26,8 +26,8 @@ def plot_size_comparison(min_size=0, max_size=1000):
         palette='viridis',  # Color palette
         alpha=0.7  # Point transparency
     )
-    plt.title('Comparison of Asteroid Sizes vs. Velocity')
-    plt.xlabel('Maximum Diameter (meters)')
+    plt.title('Comparison of Asteroid Sizes vs. Magnitude vs. Velocity')
+    plt.xlabel('Asteriod Magnitude (Brightness)')
     plt.ylabel('Velocity (km/h)')
     plt.legend(title='Hazardous?')
     plt.grid(True)
@@ -35,7 +35,7 @@ def plot_size_comparison(min_size=0, max_size=1000):
 
 
 # Example usage of the function with hypothetical parameters
-plot_size_comparison(min_size=50, max_size=500)
+plot_size_comparison(min_size=100, max_size=500)
 
 
 def speed_distribution(velocity_type='Histogram'):
