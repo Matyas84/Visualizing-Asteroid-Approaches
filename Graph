@@ -6,10 +6,9 @@ from ipywidgets import interact, widgets
 final_df = pd.read_csv('final_df.csv')
 
 
-def plot_size_comparison(hazardous=True, min_size=0, max_size=1000):
+def plot_size_comparison(min_size=0, max_size=1000):
     # Filter data based on the hazardous status and size range
     df_filtered = final_df[
-        (final_df['is_potentially_hazardous_asteroid'] == hazardous) &
         (final_df['meters.estimated_diameter_min'] >= min_size) &
         (final_df['meters.estimated_diameter_max'] <= max_size)
     ]
@@ -36,7 +35,7 @@ def plot_size_comparison(hazardous=True, min_size=0, max_size=1000):
 
 
 # Example usage of the function with hypothetical parameters
-plot_size_comparison(hazardous=True, min_size=50, max_size=500)
+plot_size_comparison(min_size=50, max_size=500)
 
 
 def speed_distribution(velocity_type='Histogram'):
