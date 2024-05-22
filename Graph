@@ -7,7 +7,6 @@ final_df = pd.read_csv('final_df.csv')
 
 
 def plot_size_comparison(min_size, max_size):
-    # Filter data based on the hazardous status and size range
     df_filtered = final_df[
         (final_df['meters.estimated_diameter_min'] >= min_size) &
         (final_df['meters.estimated_diameter_max'] <= max_size)
@@ -23,7 +22,7 @@ def plot_size_comparison(min_size, max_size):
         style='is_potentially_hazardous_asteroid',
         sizes=(20, 200),  # Marker size range for visibility
         data=df_filtered,
-        palette='viridis',  # Color palette
+        palette='viridis',
         alpha=0.7  # Point transparency
     )
     plt.title('Comparison of Asteroid Sizes vs. Magnitude vs. Velocity')
@@ -33,8 +32,6 @@ def plot_size_comparison(min_size, max_size):
     plt.grid(True)
     plt.show()
 
-
-# Example usage of the function with hypothetical parameters
 plot_size_comparison(min_size=100, max_size=500)
 
 
