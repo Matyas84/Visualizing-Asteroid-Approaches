@@ -1,9 +1,10 @@
 import dash
 from dash import dcc, html
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import dash_bootstrap_components as dbc
 import plotly.express as px
 import pandas as pd
+import matplotlib.colors as mcolors
 
 # Load your data
 final_df = pd.read_csv('final_df.csv')
@@ -31,50 +32,72 @@ data_choices = {
         'feet': 'feet.estimated_diameter_max'
     },
     'Miss Distance': {
-        'astronomical': 'miss_dist_astronomical',
+        'astronomical': 'miss_dist_astromnomical',
         'lunar': 'miss_dist_lunar',
         'kilometers': 'miss_dist_km',
         'miles': 'miss_dist_miles'
     }
 }
 
+# Updated color options
+color_options = ['green', 'yellow', 'black', 'red', 'blue', 'cyan', 'magenta', 'orange', 'purple', 'brown', 'pink', 'lime', 'teal', 'gold', 'olive']
+
 app.layout = html.Div([
-    html.H1("Interactive Asteroid Data Visualization"),
+    html.H1("Interactive Asteroid Data Visualization", style={'textAlign': 'center'}),
     html.Div([
         dcc.Dropdown(
             id='category-dropdown',
             options=[{'label': k, 'value': k} for k in data_choices.keys()],
-            value='Relative Velocity'
+            value='Relative Velocity',
+            style={'width': '70%', 'margin': 'auto'}
         ),
         dcc.Dropdown(
             id='type-dropdown',
-            value='relative_velocity_km/h'
+            value='relative_velocity_km/h',
+            style={'width': '70%', 'margin': 'auto'}
         ),
         dcc.Dropdown(
             id='plot-type-dropdown',
             options=[{'label': 'Histogram', 'value': 'Histogram'}, {'label': 'Box Plot', 'value': 'Box Plot'}],
-            value='Histogram'
+            value='Histogram',
+            style={'width': '70%', 'margin': 'auto'}
         ),
-        dcc.Dropdown(
-            id='color-dropdown',
-            options=[
-                {'label': 'Green', 'value': 'green'},
-                {'label': 'Yellow', 'value': 'yellow'},
-                {'label': 'Black', 'value': 'black'},
-                {'label': 'Red', 'value': 'red'},
-                {'label': 'Blue', 'value': 'blue'},
-                {'label': 'Cyan', 'value': 'cyan'},
-                {'label': 'Magenta', 'value': 'magenta'},
-                {'label': 'Orange', 'value': 'orange'},
-                {'label': 'Purple', 'value': 'purple'},
-                {'label': 'Brown', 'value': 'brown'},
-                {'label': 'Pink', 'value': 'pink'}
-            ],
-            value='green',  # Initial default color set to 'green'
-            placeholder='Select a color'
-        )
-    ], style={'display': 'flex', 'flexDirection': 'column'}),
-    dcc.Graph(id='dynamic-plot')
+        html.Div([
+            html.Label("Number of Bins:", style={'textAlign': 'center'}),
+            dcc.Slider(
+                id='bins-slider',
+                min=1,
+                max=50,
+                step=1,
+                value=30,
+                marks={i: str(i) for i in range(1, 51) if i == 1 or i % 5 == 0},
+                tooltip={"placement": "bottom", "always_visible": True},
+                included=False  # Highlight only the selected point
+            )
+        ], id='bins-slider-div', style={'padding': 20, 'display': 'block', 'width': '70%', 'margin': 'auto'}),
+        html.Label("Select a Color:", style={'textAlign': 'center'}),
+        html.Div(
+            dbc.ButtonGroup(
+                [dbc.Button(style={'background-color': color, 'border': '1px solid black', 'width': '30px', 'height': '30px', 'border-radius': '50%', 'padding': '0', 'margin': '2px'}, id=color, n_clicks=0) for color in color_options],
+                id='color-buttons',
+                className="mr-2"
+            ), style={'textAlign': 'center'}
+        ),
+        html.Div([
+            html.Label("Color Transparency:", style={'textAlign': 'center'}),
+            dcc.Slider(
+                id='transparency-slider',
+                min=0,
+                max=1,
+                step=0.1,
+                value=1,
+                marks={i / 10: str(i / 10) for i in range(0, 11)},
+                tooltip={"placement": "bottom", "always_visible": True},
+                included=False  # Highlight only the selected point
+            )
+        ], id='transparency-slider-div', style={'padding': 20, 'width': '70%', 'margin': 'auto'})
+    ], style={'display': 'flex', 'flexDirection': 'column', 'alignItems': 'center'}),
+    dcc.Graph(id='dynamic-plot', style={'width': '70%', 'margin': 'auto'})
 ])
 
 # Callbacks for setting dynamic dropdown and plots
@@ -93,14 +116,41 @@ def set_type_value(available_options):
     return available_options[0]['value']
 
 @app.callback(
-    Output('dynamic-plot', 'figure'),
-    [Input('type-dropdown', 'value'), Input('plot-type-dropdown', 'value'), Input('color-dropdown', 'value')]
+    Output('bins-slider-div', 'style'),
+    Input('plot-type-dropdown', 'value')
 )
-def update_plot(selected_type, plot_type, color):
+def toggle_bins_slider(plot_type):
     if plot_type == 'Histogram':
-        fig = px.histogram(final_df, x=selected_type, color_discrete_sequence=[color], nbins=30, title='Distribution of ' + selected_type)
+        return {'padding': 20, 'display': 'block', 'width': '70%', 'margin': 'auto'}
     else:
-        fig = px.box(final_df, x=selected_type, color_discrete_sequence=[color], title='Distribution of ' + selected_type)
+        return {'padding': 20, 'display': 'none', 'width': '70%', 'margin': 'auto'}
+
+@app.callback(
+    Output('dynamic-plot', 'figure'),
+    [Input('type-dropdown', 'value'), Input('plot-type-dropdown', 'value'), Input('bins-slider', 'value'), Input('transparency-slider', 'value')] + [Input(color, 'n_clicks_timestamp') for color in color_options]
+)
+def update_plot(selected_type, plot_type, bins, transparency, *args):
+    ctx = dash.callback_context
+
+    if not ctx.triggered:
+        selected_color = 'green'
+    else:
+        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+        selected_color = button_id if button_id in color_options else 'green'
+
+    # Convert the selected color to RGBA format with transparency
+    rgba_color = mcolors.to_rgba(selected_color, alpha=transparency)
+
+    if plot_type == 'Histogram':
+        fig = px.histogram(final_df, x=selected_type, nbins=bins, title=f'<b>Distribution of {selected_type}</b>')
+    else:
+        fig = px.box(final_df, x=selected_type, title=f'<b>Distribution of {selected_type}</b>')
+
+    # Update marker color with transparency
+    fig.update_traces(marker=dict(color=f'rgba{rgba_color}'))
+
+    fig.update_layout(title={'font': {'size': 20}})  # Make the title font size larger if needed
+
     return fig
 
 if __name__ == '__main__':
