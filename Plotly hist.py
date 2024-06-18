@@ -11,9 +11,6 @@ import config
 import nasa
 
 
-# Load your data
-final_df = pd.read_csv('final_df.csv')
-
 # Initialize the Dash app with Bootstrap styles
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -60,7 +57,8 @@ app.layout = html.Div([
         ),
     ], style={'display': 'flex', 'justify-content': 'center', 'align-items': 'center', 'margin': '20px'}),
     html.Div(id='output-container-date-picker-range', style={'textAlign': 'center'}),
-
+    # dcc.Store stores the intermediate value
+    dcc.Store(id='final-df'),
 
     html.Div([
         dcc.Dropdown(
@@ -120,14 +118,16 @@ app.layout = html.Div([
 
 # Callbacks for setting dynamic dropdown and plots
 @app.callback(
+    Output('final-df', 'data'),
     Output('output-container-date-picker-range', 'children'),
     Input('date-picker-range', 'start_date'),
     Input('date-picker-range', 'end_date'))
 def update_output(start_date_input, end_date_input):
     if start_date_input and end_date_input:
-        return str(nasa.download_data(start_date_input,end_date_input))
-        
-    return 'Select a date range to see the output'
+        final_df = nasa.download_data(start_date_input,end_date_input)
+        return final_df.to_dict(), f"Pocet: {len(final_df)}"
+
+    return None, "Vyberte rozsah"
 
 @app.callback(
     Output('type-dropdown', 'options'),
@@ -155,9 +155,13 @@ def toggle_bins_slider(plot_type):
 
 @app.callback(
     Output('dynamic-plot', 'figure'),
-    [Input('type-dropdown', 'value'), Input('plot-type-dropdown', 'value'), Input('bins-slider', 'value'), Input('transparency-slider', 'value')] + [Input(color, 'n_clicks_timestamp') for color in color_options]
-)
-def update_plot(selected_type, plot_type, bins, transparency, *args):
+    [Input('final-df', 'data'),Input('type-dropdown', 'value'), Input('plot-type-dropdown', 'value'), Input('bins-slider', 'value'), Input('transparency-slider', 'value')] + [Input(color, 'n_clicks_timestamp') for color in color_options])
+def update_plot(final_df,selected_type, plot_type, bins, transparency, *args):
+    if final_df is None:
+        return { } 
+    
+    final_df = pd.DataFrame.from_dict(final_df, orient="index")
+
     ctx = dash.callback_context
 
     if not ctx.triggered:

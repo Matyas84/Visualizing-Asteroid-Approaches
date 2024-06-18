@@ -33,8 +33,9 @@ def download_data(start_date, end_date):
     for d in days_from_period[::7]:
         df1 = ((seven_days(d,days_from_period)))
         raw = pd.concat([raw, df1], ignore_index=True)
+    #NAPSAT VSECHNZ FUNKCE KTERZ MENI DATAFRAME
+    #return final_df
     return raw
-
 
 def iterate_over_dates(start_date_str, end_date_str):
     try:
