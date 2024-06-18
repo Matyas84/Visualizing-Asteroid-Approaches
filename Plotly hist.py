@@ -5,12 +5,19 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 import pandas as pd
 import matplotlib.colors as mcolors
+import json
+import datetime
+import config
+import nasa
+
 
 # Load your data
 final_df = pd.read_csv('final_df.csv')
 
 # Initialize the Dash app with Bootstrap styles
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+
+
 
 # Data mapping for dropdowns
 data_choices = {
@@ -44,6 +51,17 @@ color_options = ['green', 'yellow', 'black', 'red', 'blue', 'cyan', 'magenta', '
 
 app.layout = html.Div([
     html.H1("Interactive Asteroid Data Visualization", style={'textAlign': 'center'}),
+    html.Div([
+        dcc.DatePickerRange(
+            id='date-picker-range',
+            start_date_placeholder_text="Start Date",
+            end_date_placeholder_text="End Date",
+            display_format='YYYY-MM-DD'
+        ),
+    ], style={'display': 'flex', 'justify-content': 'center', 'align-items': 'center', 'margin': '20px'}),
+    html.Div(id='output-container-date-picker-range', style={'textAlign': 'center'}),
+
+
     html.Div([
         dcc.Dropdown(
             id='category-dropdown',
@@ -102,6 +120,16 @@ app.layout = html.Div([
 
 # Callbacks for setting dynamic dropdown and plots
 @app.callback(
+    Output('output-container-date-picker-range', 'children'),
+    Input('date-picker-range', 'start_date'),
+    Input('date-picker-range', 'end_date'))
+def update_output(start_date_input, end_date_input):
+    if start_date_input and end_date_input:
+        return str(nasa.download_data(start_date_input,end_date_input))
+        
+    return 'Select a date range to see the output'
+
+@app.callback(
     Output('type-dropdown', 'options'),
     Input('category-dropdown', 'value')
 )
@@ -152,6 +180,9 @@ def update_plot(selected_type, plot_type, bins, transparency, *args):
     fig.update_layout(title={'font': {'size': 20}})  # Make the title font size larger if needed
 
     return fig
+
+
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
