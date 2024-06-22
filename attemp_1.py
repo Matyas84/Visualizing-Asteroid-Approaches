@@ -341,9 +341,13 @@ def update_plot(final_df, selected_type, plot_type, bins, transparency, *args):
      Output('max-size-slider', 'step'),
      Output('min-size-slider', 'value'),
      Output('max-size-slider', 'value')],
-    Input('unit-dropdown', 'value')
+    [Input('final-df', 'data'), Input('unit-dropdown', 'value')]
 )
-def update_sliders(unit):
+def update_sliders(final_df, unit):
+    if final_df is None:
+        return 1, {}, 0.1, 1, {}, 0.1, 0, 1
+
+    final_df = pd.DataFrame.from_dict(final_df, orient="columns")
     min_col, max_col = unit_options[unit]
     max_min_diameter = final_df[min_col].max()
     max_max_diameter = final_df[max_col].max()
