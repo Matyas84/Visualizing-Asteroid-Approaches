@@ -38,9 +38,9 @@ app.layout = html.Div([
             dcc.Slider(
                 id='x-scale-slider',
                 min=0.5,
-                max=1.5,
+                max=1.6,
                 step=0.1,
-                value=1,
+                value=1.2,
                 marks={i / 10: str(i / 10) for i in range(5, 21, 5)},
                 tooltip={"placement": "bottom", "always_visible": True},
                 included=False

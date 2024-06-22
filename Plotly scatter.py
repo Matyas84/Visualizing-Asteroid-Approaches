@@ -27,7 +27,7 @@ velocity_options = {
 }
 
 # Define color options
-color_options = ['red', 'green', 'blue', 'yellow', 'black', 'purple', 'orange', 'brown', 'pink']
+color_options = ['red', 'green', 'blue', 'yellow', 'black', 'purple', 'lime', 'teal','orange', 'brown', 'olive']
 
 app.layout = html.Div([
     html.H1("Interactive Asteroid Size Comparison", style={'textAlign': 'center'}),
