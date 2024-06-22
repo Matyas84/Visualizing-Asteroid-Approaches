@@ -35,7 +35,33 @@ def download_data(start_date, end_date):
         raw = pd.concat([raw, df1], ignore_index=True)
     #NAPSAT VSECHNZ FUNKCE KTERZ MENI DATAFRAME
     #return final_df
-    return raw
+    dia = raw["estimated_diameter"]
+    close = raw['close_approach_data']
+    dia_list = dia.tolist()
+    dia_units_df = pd.json_normalize(dia_list)
+    col_index_1 = raw.columns.get_loc("estimated_diameter")
+    left = raw.iloc[:, :col_index_1]
+    right = raw.iloc[:, col_index_1:]
+    result_df = pd.concat([left, dia_units_df, right], axis=1)
+    result_df = result_df.drop('estimated_diameter', axis=1)
+    close_df = pd.DataFrame([x[0] for x in close])
+    vel = close_df['relative_velocity']
+    vel_list = vel.tolist()
+    vel_units_df = pd.json_normalize(vel_list)
+    miss = close_df['miss_distance']
+    miss_list = miss.tolist()
+    miss_units_df = pd.json_normalize(miss_list)
+    close_df = close_df.drop(['relative_velocity', 'miss_distance'], axis=1)
+    col_index_close = result_df.columns.get_loc("close_approach_data")
+    result_df = result_df.drop('close_approach_data', axis=1)
+    left_close = result_df.iloc[:, :col_index_close]
+    right_close = result_df.iloc[:, col_index_close:]
+    final_df= pd.concat([left_close, close_df, vel_units_df, miss_units_df , right_close], axis=1)
+    column_names_mapping = {'kilometers_per_second': 'relative_velocity_km/s', 'kilometers_per_hour': 'relative_velocity_km/h','miles_per_hour': 'relative_velocity_m/h',"astronomical": "miss_dist_astromnomical","lunar": "miss_dist_lunar","kilometers": "miss_dist_km","miles": "miss_dist_miles"}
+    final_df = final_df.rename(columns=column_names_mapping)
+    return final_df
+
+
 
 def iterate_over_dates(start_date_str, end_date_str):
     try:
@@ -87,4 +113,5 @@ def seven_days(start_d, days_from_period):
         df.insert(1, 'date', day)
         raw1 = pd.concat([raw1, df], ignore_index=True)
     return(raw1)
+
 

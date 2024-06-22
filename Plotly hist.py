@@ -160,7 +160,7 @@ def update_plot(final_df,selected_type, plot_type, bins, transparency, *args):
     if final_df is None:
         return { } 
     
-    final_df = pd.DataFrame.from_dict(final_df, orient="index")
+    final_df = pd.DataFrame.from_dict(final_df, orient="columns")
 
     ctx = dash.callback_context
 
