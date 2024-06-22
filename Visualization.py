@@ -59,12 +59,19 @@ color_options = ['red', 'green', 'blue', 'yellow', 'black', 'purple', 'lime', 't
 
 app.layout = html.Div([
     html.H1("Interactive Asteroid Data Visualization", style={'textAlign': 'center'}),
-    dcc.DatePickerRange(
-        id='date-picker-range',
-        start_date_placeholder_text="Start Date",
-        end_date_placeholder_text="End Date",
-        display_format='YYYY-MM-DD'
-    ),
+    html.Div([
+        dcc.DatePickerRange(
+            id='date-picker-range',
+            start_date_placeholder_text="Start Date",
+            end_date_placeholder_text="End Date",
+            display_format='YYYY-MM-DD'
+        ),
+    ],  style={
+        "display": "flex",
+        "justify-content": "center",
+        "align-items": "center",
+        "margin": "20px"
+     }),
     html.Div(id='output-container-date-picker-range', style={'textAlign': 'center'}),
     # dcc.Store stores the intermediate value
     dcc.Store(id='final-df'),
