@@ -55,7 +55,7 @@ velocity_options = {
 }
 
 # Define color options
-color_options = ['red', 'green', 'blue', 'yellow', 'black', 'purple', 'lime', 'teal','orange', 'brown', 'olive']
+color_options = ['red', 'green', 'blue', 'yellow', 'black', 'purple', 'lime', 'teal', 'brown', 'olive']
 
 app.layout = html.Div([
     html.H1("Interactive Asteroid Data Visualization", style={'textAlign': 'center'}),
@@ -271,7 +271,7 @@ app.layout = html.Div([
 def update_output(start_date_input, end_date_input):
     if start_date_input and end_date_input:
         final_df = nasa.download_data(start_date_input, end_date_input)
-        return final_df.to_dict(), f"Count of Asteroids: {len(final_df)}"
+        return final_df.to_dict(), f"Pocet: {len(final_df)}"
 
     return None, "Choose the range please!"
 
@@ -324,8 +324,7 @@ def update_plot(final_df, selected_type, plot_type, bins, transparency, *args):
         final_df[selected_type] = pd.to_numeric(final_df[selected_type], errors='coerce')
 
     if plot_type == 'Histogram':
-        final_df['binned'] = pd.cut(final_df[selected_type], bins=bins).astype(str)
-        fig = px.histogram(final_df, x='binned', title=f'<b>Distribution of {selected_type}</b>')
+        fig = px.histogram(final_df, x=selected_type, nbins=bins, title=f'<b>Distribution of {selected_type}</b>')
     else:
         fig = px.box(final_df, x=selected_type, title=f'<b>Distribution of {selected_type}</b>')
 
