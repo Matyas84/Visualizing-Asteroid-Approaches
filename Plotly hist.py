@@ -40,7 +40,7 @@ data_choices = {
 }
 
 # Updated color options
-color_options = ['green', 'yellow', 'black', 'red', 'blue', 'cyan', 'magenta', 'orange', 'purple', 'brown', 'pink', 'lime', 'teal', 'gold', 'olive']
+color_options = ['green', 'yellow', 'black', 'red', 'blue', 'cyan', 'magenta', 'orange', 'purple', 'brown', 'lime', 'teal', 'olive']
 
 app.layout = html.Div([
     html.H1("Interactive Asteroid Data Visualization", style={'textAlign': 'center'}),
@@ -78,7 +78,7 @@ app.layout = html.Div([
         html.Label("Select a Color:", style={'textAlign': 'center'}),
         html.Div(
             dbc.ButtonGroup(
-                [dbc.Button(style={'background-color': color, 'border': '1px solid black', 'width': '30px', 'height': '30px', 'border-radius': '50%', 'padding': '0', 'margin': '2px'}, id=color, n_clicks=0) for color in color_options],
+                [dbc.Button(style={'background-color': color, 'border': '1px solid black', 'width': '30px', 'height': '30px', 'border-radius': '50%', 'padding': '0', 'margin': '2px'}, id=color, n_clicks_timestamp=-1) for color in color_options],
                 id='color-buttons',
                 className="mr-2"
             ), style={'textAlign': 'center'}
@@ -135,8 +135,8 @@ def update_plot(selected_type, plot_type, bins, transparency, *args):
     if not ctx.triggered:
         selected_color = 'green'
     else:
-        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
-        selected_color = button_id if button_id in color_options else 'green'
+        timestamps = {color: ctx.inputs.get(f'{color}.n_clicks_timestamp', -1) for color in color_options}
+        selected_color = max(timestamps, key=timestamps.get)
 
     # Convert the selected color to RGBA format with transparency
     rgba_color = mcolors.to_rgba(selected_color, alpha=transparency)
