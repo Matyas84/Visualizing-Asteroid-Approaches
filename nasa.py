@@ -33,7 +33,7 @@ def download_data(start_date, end_date):
     for d in days_from_period[::7]:
         df1 = ((seven_days(d,days_from_period)))
         raw = pd.concat([raw, df1], ignore_index=True)
-    #NAPSAT VSECHNZ FUNKCE KTERZ MENI DATAFRAME
+    #Write down all the functions used in the dataframe.
     #return final_df
     dia = raw["estimated_diameter"]
     close = raw['close_approach_data']

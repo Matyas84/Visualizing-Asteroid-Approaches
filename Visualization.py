@@ -10,11 +10,8 @@ import datetime
 import config
 import nasa
 
-
 # Initialize the Dash app with Bootstrap styles
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
-
-
 
 # Data mapping for dropdowns
 data_choices = {
@@ -127,7 +124,7 @@ def update_output(start_date_input, end_date_input):
         final_df = nasa.download_data(start_date_input,end_date_input)
         return final_df.to_dict(), f"Pocet: {len(final_df)}"
 
-    return None, "Vyberte rozsah"
+    return None, "Choose the range please!"
 
 @app.callback(
     Output('type-dropdown', 'options'),
