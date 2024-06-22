@@ -271,7 +271,7 @@ app.layout = html.Div([
 def update_output(start_date_input, end_date_input):
     if start_date_input and end_date_input:
         final_df = nasa.download_data(start_date_input, end_date_input)
-        return final_df.to_dict(), f"Pocet: {len(final_df)}"
+        return final_df.to_dict(), f"Count: {len(final_df)}"
 
     return None, "Choose the range please!"
 
