@@ -13,7 +13,7 @@ The primary data source for this project is the Asteroids - NeoWs API provided b
 
 ## Project Description
 
-The project is divided into three main parts:
+The project is divided into two main parts:
 
 1. **Data Collection and Processing**: Fetching data from NASA’s NeoWs API, cleaning, and preparing it for visualization.
 2. **Data Visualization and Interactive Dashboard**: Creating interactive visualizations to analyze asteroid data using Dash to allow users to interact with the visualizations.
@@ -26,7 +26,7 @@ The project is divided into three main parts:
 
 The dashboard features a responsive design for various devices, automatic data updates, and a user guide for navigating and understanding the visualizations.
 
-## Project Structure
+### Project Structure
 
 ```plaintext
 │ .gitignore                      # Git ignore file
@@ -34,15 +34,16 @@ The dashboard features a responsive design for various devices, automatic data u
 │ Visualization.py                # Main application script with data visualization
 │ nasa.py                         # Script to interact with NASA API and fetch data
 │ requirements.txt                # Required dependencies
+```
 
-## Application Components
+### Application Components
 
 - **Date Picker**: Allows users to select a date range for which the asteroid data is fetched and displayed.
 - **Histogram and Box Plot Tab**: Visualizes the distribution of asteroid data (e.g., relative velocity, diameter) using histograms and box plots.
 - **Scatter Plot Tab**: Compares asteroid sizes against velocity or approach distance, with options to filter by hazardous status and size.
 - **Bar Chart Tab**: Displays the daily count of asteroids, with options to filter by hazardous status and adjust axis scales.
 
-## Using the Application
+### Using the Application
 
 1. **Clone the Repository**: Start by cloning the repository to your local machine.
 
