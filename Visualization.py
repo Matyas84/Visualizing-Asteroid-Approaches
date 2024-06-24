@@ -8,6 +8,9 @@ import matplotlib.colors as mcolors
 import datetime
 import config
 import nasa
+import webbrowser
+import threading
+
 
 # Initialize the Dash app with Bootstrap styles for a responsive and visually appealing layout
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -567,6 +570,13 @@ def update_chart(final_df, hazard_status, x_scale, y_scale):
 
     return fig
 
+
+# Defining a function to open the browser
+def open_browser():
+    webbrowser.open_new("http://127.0.0.1:8050/")
+
+
 # Run the Dash server
 if __name__ == '__main__':
+    threading.Timer(1, open_browser).start()
     app.run_server(debug=True)
