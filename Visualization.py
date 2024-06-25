@@ -98,7 +98,7 @@ app.layout = html.Div([
             end_date_placeholder_text="End Date",
             display_format='YYYY-MM-DD',
             minimum_nights=0,
-            max_date_allowed = date.today()
+            #max_date_allowed = date.today()
         ),
     ], style={
         "display": "flex",
