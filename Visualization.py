@@ -9,6 +9,7 @@ import nasa
 import webbrowser
 import threading
 import requests
+from datetime import date
 
 # Initialize the Dash app with Bootstrap styles for a responsive and visually appealing layout
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -95,7 +96,9 @@ app.layout = html.Div([
             id='date-picker-range',
             start_date_placeholder_text="Start Date",
             end_date_placeholder_text="End Date",
-            display_format='YYYY-MM-DD'
+            display_format='YYYY-MM-DD',
+            minimum_nights=0,
+            max_date_allowed = date.today()
         ),
     ], style={
         "display": "flex",

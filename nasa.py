@@ -53,24 +53,22 @@ def download_data(api_key, start_date, end_date):
 
 # this function generates a list of date strings between a given start date and end date.
 def iterate_over_dates(start_date_str, end_date_str):
-    try:
-        # Convert start and end dates to datetime objects
-        start_date = datetime.datetime.strptime(start_date_str, "%Y-%m-%d")
-        end_date = datetime.datetime.strptime(end_date_str, "%Y-%m-%d")
+    # Convert start and end dates to datetime objects
+    start_date = datetime.datetime.strptime(start_date_str, "%Y-%m-%d")
+    end_date = datetime.datetime.strptime(end_date_str, "%Y-%m-%d")
         
-        date_strings = []
+    date_strings = []
         
         # Iterate over each day between start and end dates
-        while start_date <= end_date:
-            date_strings.append(start_date.strftime("%Y-%m-%d"))
+    while start_date <= end_date:
+        date_strings.append(start_date.strftime("%Y-%m-%d"))
             
             
-            start_date += datetime.timedelta(days=1)  # Increment the date by one day.
+        start_date += datetime.timedelta(days=1)  # Increment the date by one day.
             
-        return date_strings
+    return date_strings
             
-    except Exception as e:
-        return str(e)
+
 
 # This function is designed to find a date that is a certain number of days after a given input date, based on a list of dates. If the date list does not contain the given date, it finds the nearest earlier date.
 def find_date_after(days_after, input_date_str, date_list):
