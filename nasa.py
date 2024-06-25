@@ -1,25 +1,16 @@
-import matplotlib.pyplot as plt
-
 import requests
-import json
-
-import os
 import pandas as pd
-import numpy as np
-
-from bs4 import BeautifulSoup
-
-import boto3
 import datetime
-from IPython.display import HTML, display
-import datetime
-import config
-import time
 #key: XwVHPFh2zHGkoQZ3QmLtDqyncNjhdloY07lr9868
-key = "XwVHPFh2zHGkoQZ3QmLtDqyncNjhdloY07lr9868"
+key = None  # This will store the API key, initialized as None
+
+def set_api_key(api_key):
+    global key
+    key = api_key
 
 
-def request_nasa(start_date: str, end_date: str):
+#request to the NASA API to retrieve data about near-Earth objects for a specified date range.
+def request_nasa(start_date: str, end_date: str, key:str):
     request_url = f"https://api.nasa.gov/neo/rest/v1/feed?start_date={start_date}&end_date={end_date}&api_key={key}"
     try:
         r = requests.get(request_url)
@@ -27,14 +18,14 @@ def request_nasa(start_date: str, end_date: str):
     except Exception as e:
         print(e)
 
+# This function merges all 8-day dataframes and it processes the DataFrame to normalize JSON fields and rename columns for clarity.
 def download_data(start_date, end_date):
     days_from_period = iterate_over_dates(start_date, end_date)
     raw = pd.DataFrame()
-    for d in days_from_period[::7]:
-        df1 = ((seven_days(d,days_from_period)))
+    for d in days_from_period[::8]:
+        df1 = ((eight_days(d,days_from_period)))
         raw = pd.concat([raw, df1], ignore_index=True)
-    #Write down all the functions used in the dataframe.
-    #return final_df
+    
     dia = raw["estimated_diameter"]
     close = raw['close_approach_data']
     dia_list = dia.tolist()
@@ -62,7 +53,7 @@ def download_data(start_date, end_date):
     return final_df
 
 
-
+# this function generates a list of date strings between a given start date and end date.
 def iterate_over_dates(start_date_str, end_date_str):
     try:
         # Convert start and end dates to datetime objects
@@ -76,14 +67,14 @@ def iterate_over_dates(start_date_str, end_date_str):
             date_strings.append(start_date.strftime("%Y-%m-%d"))
             
             
-            start_date += datetime.timedelta(days=1)  # Increment the date by one day
+            start_date += datetime.timedelta(days=1)  # Increment the date by one day.
             
         return date_strings
             
     except Exception as e:
         return str(e)
 
-
+# This function is designed to find a date that is a certain number of days after a given input date, based on a list of dates. If the date list does not contain the given date, it finds the nearest earlier date.
 def find_date_after(days_after, input_date_str, date_list):
     if input_date_str not in date_list:
         return "Input date is not in the list."
@@ -93,22 +84,22 @@ def find_date_after(days_after, input_date_str, date_list):
     
     return date_list[target_index]
 
-
-def iterate_dates(start_date_str, days_from_period):
-    end_date_str = find_date_after(6,start_date_str,days_from_period)
+# This function is designed to find and return a sublist of dates from a given start date to a date that is 7 days later in a provided list of dates. It uses function find_date_after to determine the end date.
+def eight_day_sublist(start_date_str, days_from_period):
+    end_date_str = find_date_after(7,start_date_str,days_from_period)
     start_index = days_from_period.index(start_date_str)
     end_index = days_from_period.index(end_date_str)
     return days_from_period[start_index:end_index + 1]
 
 
-
-def seven_days(start_d, days_from_period):
-    end_date=(find_date_after(6,start_d,days_from_period))
-    week = iterate_dates(start_d,days_from_period)
+#This function is designed to create a DataFrame containing Near Earth Objects for data for a 8 days starting from a specified date.
+def eight_days(start_d, days_from_period):
+    end_date=(find_date_after(7,start_d,days_from_period))
+    week = eight_day_sublist(start_d,days_from_period)
     raw1=pd.DataFrame()
 
     for day in week:
-        neo_data = pd.DataFrame((request_nasa(start_d,end_date)["near_earth_objects"][day]))
+        neo_data = pd.DataFrame((request_nasa(start_d,end_date,key)["near_earth_objects"][day]))
         df = pd.DataFrame(neo_data)
         df.insert(1, 'date', day)
         raw1 = pd.concat([raw1, df], ignore_index=True)

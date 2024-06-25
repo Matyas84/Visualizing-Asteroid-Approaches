@@ -5,11 +5,10 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 import pandas as pd
 import matplotlib.colors as mcolors
-import datetime
-import config
 import nasa
 import webbrowser
 import threading
+import requests
 
 
 # Initialize the Dash app with Bootstrap styles for a responsive and visually appealing layout
@@ -68,6 +67,17 @@ app.layout = html.Div([
     html.H1("Interactive Asteroid Data Visualization", style={'textAlign': 'center'}),
     
     # Date picker for selecting the date range of interest
+
+    html.Div([dcc.Input(id='api-key-input', type='text', placeholder='Enter NASA API Key', debounce=True),
+        html.Button('set API Key', id='set-api-key-button', n_clicks=0)],
+        style={
+        "display": "flex",
+        "justify-content": "center",
+        "align-items": "center",
+        "margin": "20px"
+    }),
+
+
     html.Div([
         dcc.DatePickerRange(
             id='date-picker-range',
@@ -83,8 +93,12 @@ app.layout = html.Div([
     }),
     
     # Container to display the number of asteroids in the selected date range
+    html.Div(id='api-key-output'),
+
     html.Div(id='output-container-date-picker-range', style={'textAlign': 'center'}),
     
+
+
     # Store component to hold the processed data for use in callbacks
     dcc.Store(id='final-df'),
 
@@ -312,7 +326,36 @@ app.layout = html.Div([
     ])
 ])
 
+
+@app.callback(
+    Output('api-key-output', 'children'),
+    [Input('set-api-key-button', 'n_clicks')],
+    [State('api-key-input', 'value')]
+)
+def update_api_key(n_clicks, api_key):
+    if n_clicks > 0 and api_key:
+        try:
+            # Attempt to make a test request with the provided API key
+            response = requests.get(f"https://api.nasa.gov/neo/rest/v1/feed?start_date=2022-02-02&end_date=2022-02-02&api_key={api_key}")
+            if response.status_code == 200:
+                # If the API request was successful, set the API key in nasa.py
+                nasa.set_api_key(api_key)
+                return html.Div("API Key set successfully, select a date range!", style={'color': 'green','textAlign': 'center'})
+
+            else:
+                # If the request failed (status code is not 200), handle the error
+                print(f"Failed to set API Key. Status code: {response.status_code}")
+                return html.Div("Failed to set API Key. Please check and try again.", style={'color': 'red','textAlign': 'center'})
+        except requests.exceptions.RequestException as e:
+            # Handle other request exceptions (e.g., connection error, timeout)
+            print(f"Failed to set API Key: {e}")
+            return html.Div("Failed to set API Key. Please check and try again.", style={'color': 'red','textAlign': 'center'})
+
+    return ''
+
+
 # Callback to update data based on selected date range, automatically update certain parts of the app in response to user inputs, without needing to reload the entire page.
+
 @app.callback(
     Output('final-df', 'data'),
     Output('output-container-date-picker-range', 'children'),
@@ -323,7 +366,7 @@ def update_output(start_date_input, end_date_input):
     if start_date_input and end_date_input:
         final_df = nasa.download_data(start_date_input, end_date_input)
         return final_df.to_dict(), f"Count of Asteroids: {len(final_df)}"
-    return None, "Choose the range please!"
+    return None, " "
 
 # Callback to update type options based on selected category
 @app.callback(
