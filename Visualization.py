@@ -8,7 +8,6 @@ import matplotlib.colors as mcolors
 import nasa
 import webbrowser
 import threading
-import requests
 from datetime import date
 
 # Initialize the Dash app with Bootstrap styles for a responsive and visually appealing layout
@@ -80,7 +79,7 @@ def create_info_modal(tab_id, title, content):
 app.layout = html.Div([
     html.H1("Interactive Asteroid Data Visualization", style={'textAlign': 'center'}),
     
-    # Date picker for selecting the date range of interest
+    # api-key insert column
 
     html.Div([dcc.Input(id='api-key-input', type='text', placeholder='Enter NASA API Key', debounce=True)],
         style={
@@ -90,6 +89,7 @@ app.layout = html.Div([
         "margin": "20px"
     }),
 
+    # Date picker for selecting the date range of interest
 
     html.Div([
         dcc.DatePickerRange(
