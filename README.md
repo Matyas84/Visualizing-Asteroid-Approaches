@@ -64,7 +64,7 @@ The dashboard features a responsive design for various devices, automatic data u
     python Visualization.py
     ```
 
-4. **Access the Application**: Use the link in the terminal or open your web browser and go to `http://127.0.0.1:8050/` to access the interactive dashboard.
+4. **Access the Application**: Web browser with the interactive dashboard will be opened automatically. Alternatively, you can use the link in the terminal or open your web browser and go to `http://127.0.0.1:8050/`.
 
 ## Contribution
 
