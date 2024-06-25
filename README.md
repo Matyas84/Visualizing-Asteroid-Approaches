@@ -68,12 +68,8 @@ The dashboard features a responsive design for various devices, automatic data u
 
 ## Contribution
 
-This project provides space enthusiasts with a user-friendly interface to analyze trends and derive insights about near-Earth objects.
+The project structure and components mentioned above are tailored to provide users with an interactive and insightful experience in exploring asteroid approaches using data from NASA's NeoWs API. By following the steps under "Using the Application," users can easily set up and run the application locally to start analyzing trends and derive insights about near-Earth objects.
 
 ---
 
 Matyáš Horák and Matyáš Lebeda
-
----
-
-The project structure and components mentioned above are tailored to provide users with an interactive and insightful experience in exploring asteroid approaches using data from NASA's NeoWs API. By following the steps under "Using the Application," users can easily set up and run the application locally to start analyzing asteroid data through the provided visualizations.
