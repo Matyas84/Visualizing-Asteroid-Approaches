@@ -40,8 +40,10 @@ The dashboard features a responsive design for various devices, automatic data u
 
 - **Date Picker**: Allows users to select a date range for which the asteroid data is fetched and displayed.
 - **Histogram and Box Plot Tab**: Visualizes the distribution of asteroid data (e.g., relative velocity, diameter) using histograms and box plots.
-- **Scatter Plot Tab**: Compares asteroid sizes against velocity or approach distance, with options to filter by hazardous status and size.
-- **Bar Chart Tab**: Displays the daily count of asteroids, with options to filter by hazardous status and adjust axis scales.
+- **Scatter Plot Tab**: Compares asteroid sizes against their velocity and their magnitude, with options to filter by hazardous status and size.
+- **Bar Chart Tab**: Displays the daily count of asteroids, with options to filter by hazardous status.
+
+Tab Instructions are included on each tab for guidance and further understanding.
 
 ### Using the Application
 
@@ -64,16 +66,16 @@ The dashboard features a responsive design for various devices, automatic data u
     python Visualization.py
     ```
 
-4. **Access the Application**: Use the link in the terminal or open your web browser and go to `http://127.0.0.1:8050/` to access the interactive dashboard.
+4. **Access the Application**: Web browser with the interactive dashboard will be opened automatically. Alternatively, you can use the link in the terminal or open your web browser and go to `http://127.0.0.1:8050/`.
 
-## Contribution
+## Concluding remarks
 
-This project provides space enthusiasts with a user-friendly interface to analyze trends and derive insights about near-Earth objects.
+The project structure and components mentioned above are tailored to provide users with an interactive and insightful experience in exploring asteroid approaches using data from NASA's NeoWs API. By following the steps under "Using the Application," users can easily set up and run the application locally to start analyzing trends and derive insights about near-Earth objects.Running the application locally ensures that users have full control over the environment and dependencies, providing a seamless and efficient experience.
+
+While it is theoretically possible to deploy such applications online, there are significant challenges and limitations, especially when considering free hosting solutions. For instance, GitHub Pages is a popular platform for hosting static websites but it does not support running server-side applications like Dash. This limitation makes it unsuitable for hosting interactive Dash applications.
+
+Commercial hosting solutions such as Heroku and AWS provide robust platforms for deploying Dash applications. However, these services often come with costs associated with sustained usage.
 
 ---
 
 Matyáš Horák and Matyáš Lebeda
-
----
-
-The project structure and components mentioned above are tailored to provide users with an interactive and insightful experience in exploring asteroid approaches using data from NASA's NeoWs API. By following the steps under "Using the Application," users can easily set up and run the application locally to start analyzing asteroid data through the provided visualizations.

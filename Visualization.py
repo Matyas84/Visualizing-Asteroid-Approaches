@@ -10,7 +10,6 @@ import webbrowser
 import threading
 import requests
 
-
 # Initialize the Dash app with Bootstrap styles for a responsive and visually appealing layout
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -62,6 +61,20 @@ velocity_options = {
 # List of color options available for customization of the plots
 color_options = ['red', 'green', 'blue', 'yellow', 'black', 'purple', 'lime', 'teal', 'grey', 'brown', 'olive']
 
+# Function to create info modals
+def create_info_modal(tab_id, title, content):
+    return dbc.Modal(
+        [
+            dbc.ModalHeader(dbc.ModalTitle(title)),
+            dbc.ModalBody(content),
+            dbc.ModalFooter(
+                dbc.Button("Close", id=f"close-{tab_id}-modal", className="ms-auto", n_clicks=0)
+            ),
+        ],
+        id=f"{tab_id}-modal",
+        is_open=False,
+    )
+
 # Layout definition for the Dash application
 app.layout = html.Div([
     html.H1("Interactive Asteroid Data Visualization", style={'textAlign': 'center'}),
@@ -108,27 +121,27 @@ app.layout = html.Div([
         # Tab for Histogram and Box Plot
         dbc.Tab(label='Histogram and Box Plot', children=[
             html.Div([
-                # Dropdown for selecting the data category (e.g. Relative Velocity, Estimated Diameter etc.)
+                html.H2("Asteroid Parameter Distribution Analysis", style={'textAlign': 'center', 'marginTop': '20px'}),
+                html.Div([
+                    dbc.Button("Tab Instructions", id="open-histogram-boxplot-modal", n_clicks=0, className="mb-3"),
+                ], style={'textAlign': 'center'}),
                 dcc.Dropdown(
                     id='category-dropdown',
                     options=[{'label': k, 'value': k} for k in data_choices.keys()],
                     value='Relative Velocity',
                     style={'width': '70%', 'margin': 'auto', 'marginTop': '20px'}
                 ),
-                # Dropdown for selecting the specific type within the selected category
                 dcc.Dropdown(
                     id='type-dropdown',
                     value='relative_velocity_km/h',
                     style={'width': '70%', 'margin': 'auto', 'marginTop': '20px'}
                 ),
-                # Dropdown for selecting the plot type (Histogram or Box Plot)
                 dcc.Dropdown(
                     id='plot-type-dropdown',
                     options=[{'label': 'Histogram', 'value': 'Histogram'}, {'label': 'Box Plot', 'value': 'Box Plot'}],
                     value='Histogram',
                     style={'width': '70%', 'margin': 'auto', 'marginTop': '20px'}
                 ),
-                # Slider for selecting the number of bins in the histogram
                 html.Div([
                     html.Label("Number of Bins:", style={'textAlign': 'center'}),
                     dcc.Slider(
@@ -170,14 +183,21 @@ app.layout = html.Div([
             ], style={'display': 'flex', 'flexDirection': 'column', 'alignItems': 'center'}),
             dcc.Graph(id='dynamic-plot', style={'width': '70%', 'margin': 'auto'})
         ]),
-        
+        create_info_modal(
+            tab_id="histogram-boxplot",
+            title="Histogram and Box Plot",
+            content="This tab allows you to visualize the distribution of asteroid data using histograms and box plots. Select the parameter you want to analyze from the first dropdown, then choose the unit for the parameter from the second dropdown. Next, select the type of chart from the third dropdown. Adjust the number of bins for the histogram if chosen using the slider. Pick a color for the chart from the available options and use the transparency slider to set the desired transparency level for the chart color."
+        ),
+
         # Tab for Scatter Plot
         dbc.Tab(label='Scatter Plot', children=[
             html.Div([
-                html.H1("Interactive Asteroid Size Comparison", style={'textAlign': 'center'}),
+                html.H2("Interactive Asteroid Size Comparison", style={'textAlign': 'center', 'marginTop': '20px'}),
+                html.Div([
+                    dbc.Button("Tab Instructions", id="open-scatter-plot-modal", n_clicks=0, className="mb-3"),
+                ], style={'textAlign': 'center'}),
                 dbc.Row([
                     dbc.Col([
-                        # Dropdown for selecting the unit of asteroid diameter
                         html.Div([
                             html.Label("Select Unit for Asteroid Diameter:"),
                             dcc.Dropdown(
@@ -272,11 +292,19 @@ app.layout = html.Div([
                 ])
             ])
         ]),
-        
+        create_info_modal(
+            tab_id="scatter-plot",
+            title="Scatter Plot",
+            content="This tab allows you to compare asteroid sizes against their velocity and their magnitude. Select the unit for asteroid diameter from the first dropdown. Adjust the minimum and maximum diameter using the sliders. Choose the unit for relative velocity from the second dropdown. Set the plot size using the slider. Select colors for hazardous and non-hazardous asteroids from their respective dropdowns, you can also filter the hazardous status directly in the plot."
+        ),
+
         # Tab for Bar Chart
         dbc.Tab(label='Bar Chart', children=[
             html.Div([
-                html.H1("Asteroid Count per Day", style={'textAlign': 'center'}),
+                html.H2("Asteroid Count per Day", style={'textAlign': 'center', 'marginTop': '20px'}),
+                html.Div([
+                    dbc.Button("Tab Instructions", id="open-bar-chart-modal", n_clicks=0, className="mb-3"),
+                ], style={'textAlign': 'center'}),
                 html.Div([
                     # Dropdown for selecting the hazardous status filter
                     html.Div([
@@ -319,10 +347,15 @@ app.layout = html.Div([
                             included=False
                         ),
                     ], style={'width': '45%', 'display': 'inline-block', 'verticalAlign': 'top', 'marginLeft': '5%'})
-                ], style={'width': '70%', 'margin': 'auto', 'marginTop': '20px', 'display': 'flex', 'justifyContent': 'space-between'}),
+                ], style={'width': '70%', 'margin': 'auto', 'marginTop': '20px', 'display': 'flex', 'justify-content': 'space-between'}),
                 dcc.Graph(id='bar-chart', style={'width': '70%', 'margin': 'auto', 'marginTop': '20px'})
             ])
-        ])
+        ]),
+        create_info_modal(
+            tab_id="bar-chart",
+            title="Bar Chart",
+            content="This tab displays the daily count of asteroids. Select whether to display hazardous, non-hazardous, or both types of asteroids from the dropdown menu. Adjust the X-axis and Y-axis scales using the sliders to zoom in or out on the chart."
+        )
     ])
 ])
 
@@ -613,6 +646,33 @@ def update_chart(final_df, hazard_status, x_scale, y_scale):
 
     return fig
 
+# Callback to handle opening and closing of modals
+@app.callback(
+    [Output("histogram-boxplot-modal", "is_open"),
+     Output("scatter-plot-modal", "is_open"),
+     Output("bar-chart-modal", "is_open")],
+    [Input("open-histogram-boxplot-modal", "n_clicks"),
+     Input("open-scatter-plot-modal", "n_clicks"),
+     Input("open-bar-chart-modal", "n_clicks"),
+     Input("close-histogram-boxplot-modal", "n_clicks"),
+     Input("close-scatter-plot-modal", "n_clicks"),
+     Input("close-bar-chart-modal", "n_clicks")],
+    [State("histogram-boxplot-modal", "is_open"),
+     State("scatter-plot-modal", "is_open"),
+     State("bar-chart-modal", "is_open")],
+)
+def toggle_modal(n1, n2, n3, n4, n5, n6, is_open1, is_open2, is_open3):
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        return [is_open1, is_open2, is_open3]
+    button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+    if button_id == "open-histogram-boxplot-modal" or button_id == "close-histogram-boxplot-modal":
+        return [not is_open1, is_open2, is_open3]
+    elif button_id == "open-scatter-plot-modal" or button_id == "close-scatter-plot-modal":
+        return [is_open1, not is_open2, is_open3]
+    elif button_id == "open-bar-chart-modal" or button_id == "close-bar-chart-modal":
+        return [is_open1, is_open2, not is_open3]
+    return [is_open1, is_open2, is_open3]
 
 # Defining a function to open the browser
 def open_browser():
