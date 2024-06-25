@@ -2,28 +2,26 @@ import requests
 import pandas as pd
 import datetime
 #key: XwVHPFh2zHGkoQZ3QmLtDqyncNjhdloY07lr9868
-key = None  # This will store the API key, initialized as None
 
-def set_api_key(api_key):
-    global key
-    key = api_key
 
 
 #request to the NASA API to retrieve data about near-Earth objects for a specified date range.
 def request_nasa(start_date: str, end_date: str, key:str):
     request_url = f"https://api.nasa.gov/neo/rest/v1/feed?start_date={start_date}&end_date={end_date}&api_key={key}"
-    try:
-        r = requests.get(request_url)
-        return r.json()
-    except Exception as e:
-        print(e)
+    r = requests.get(request_url)
+    if r.status_code != 200:
+        print(r.content)
+        error_message = r.json()["error"]["message"]
+        raise Exception (error_message)
+    return r.json()
+   
 
 # This function merges all 8-day dataframes and it processes the DataFrame to normalize JSON fields and rename columns for clarity.
-def download_data(start_date, end_date):
+def download_data(api_key, start_date, end_date):
     days_from_period = iterate_over_dates(start_date, end_date)
     raw = pd.DataFrame()
     for d in days_from_period[::8]:
-        df1 = ((eight_days(d,days_from_period)))
+        df1 = ((eight_days(api_key, d,days_from_period)))
         raw = pd.concat([raw, df1], ignore_index=True)
     
     dia = raw["estimated_diameter"]
@@ -93,13 +91,13 @@ def eight_day_sublist(start_date_str, days_from_period):
 
 
 #This function is designed to create a DataFrame containing Near Earth Objects for data for a 8 days starting from a specified date.
-def eight_days(start_d, days_from_period):
+def eight_days(api_key, start_d, days_from_period):
     end_date=(find_date_after(7,start_d,days_from_period))
     week = eight_day_sublist(start_d,days_from_period)
     raw1=pd.DataFrame()
 
     for day in week:
-        neo_data = pd.DataFrame((request_nasa(start_d,end_date,key)["near_earth_objects"][day]))
+        neo_data = pd.DataFrame((request_nasa(start_d, end_date, api_key)["near_earth_objects"][day]))
         df = pd.DataFrame(neo_data)
         df.insert(1, 'date', day)
         raw1 = pd.concat([raw1, df], ignore_index=True)

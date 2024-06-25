@@ -81,8 +81,7 @@ app.layout = html.Div([
     
     # Date picker for selecting the date range of interest
 
-    html.Div([dcc.Input(id='api-key-input', type='text', placeholder='Enter NASA API Key', debounce=True),
-        html.Button('set API Key', id='set-api-key-button', n_clicks=0)],
+    html.Div([dcc.Input(id='api-key-input', type='text', placeholder='Enter NASA API Key', debounce=True)],
         style={
         "display": "flex",
         "justify-content": "center",
@@ -106,10 +105,10 @@ app.layout = html.Div([
     }),
     
     # Container to display the number of asteroids in the selected date range
-    html.Div(id='api-key-output'),
+    html.Div(id='output-asteroid-count', style={'textAlign': 'center'}),
 
-    html.Div(id='output-container-date-picker-range', style={'textAlign': 'center'}),
-    
+    html.Div(id='output-request-error', style={"color":"red","textAlign": "center"}),
+
 
 
     # Store component to hold the processed data for use in callbacks
@@ -360,46 +359,24 @@ app.layout = html.Div([
 ])
 
 
-@app.callback(
-    Output('api-key-output', 'children'),
-    [Input('set-api-key-button', 'n_clicks')],
-    [State('api-key-input', 'value')]
-)
-def update_api_key(n_clicks, api_key):
-    if n_clicks > 0 and api_key:
-        try:
-            # Attempt to make a test request with the provided API key
-            response = requests.get(f"https://api.nasa.gov/neo/rest/v1/feed?start_date=2022-02-02&end_date=2022-02-02&api_key={api_key}")
-            if response.status_code == 200:
-                # If the API request was successful, set the API key in nasa.py
-                nasa.set_api_key(api_key)
-                return html.Div("API Key set successfully, select a date range!", style={'color': 'green','textAlign': 'center'})
-
-            else:
-                # If the request failed (status code is not 200), handle the error
-                print(f"Failed to set API Key. Status code: {response.status_code}")
-                return html.Div("Failed to set API Key. Please check and try again.", style={'color': 'red','textAlign': 'center'})
-        except requests.exceptions.RequestException as e:
-            # Handle other request exceptions (e.g., connection error, timeout)
-            print(f"Failed to set API Key: {e}")
-            return html.Div("Failed to set API Key. Please check and try again.", style={'color': 'red','textAlign': 'center'})
-
-    return ''
-
-
 # Callback to update data based on selected date range, automatically update certain parts of the app in response to user inputs, without needing to reload the entire page.
-
 @app.callback(
     Output('final-df', 'data'),
-    Output('output-container-date-picker-range', 'children'),
+    Output('output-asteroid-count', 'children'),
+    Output('output-request-error', 'children'),
+    Input("api-key-input", "value"),
     Input('date-picker-range', 'start_date'),
     Input('date-picker-range', 'end_date'))
-def update_output(start_date_input, end_date_input):
+def update_output(api_key, start_date_input, end_date_input):
     # Download data from NASA API based on selected date range
-    if start_date_input and end_date_input:
-        final_df = nasa.download_data(start_date_input, end_date_input)
-        return final_df.to_dict(), f"Count of Asteroids: {len(final_df)}"
-    return None, " "
+    if start_date_input and end_date_input and api_key:
+        try:
+            final_df = nasa.download_data(api_key, start_date_input, end_date_input)
+            return final_df.to_dict(), f"Count of Asteroids: {len(final_df)}", None
+        except Exception as e:
+            return None, "", str(e)
+    else:
+        return None, "", None
 
 # Callback to update type options based on selected category
 @app.callback(
