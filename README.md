@@ -40,8 +40,10 @@ The dashboard features a responsive design for various devices, automatic data u
 
 - **Date Picker**: Allows users to select a date range for which the asteroid data is fetched and displayed.
 - **Histogram and Box Plot Tab**: Visualizes the distribution of asteroid data (e.g., relative velocity, diameter) using histograms and box plots.
-- **Scatter Plot Tab**: Compares asteroid sizes against velocity or approach distance, with options to filter by hazardous status and size.
-- **Bar Chart Tab**: Displays the daily count of asteroids, with options to filter by hazardous status and adjust axis scales.
+- **Scatter Plot Tab**: Compares asteroid sizes against their velocity and their magnitude, with options to filter by hazardous status and size.
+- **Bar Chart Tab**: Displays the daily count of asteroids, with options to filter by hazardous status.
+
+Tab Instructions are included on each tab for guidance and further understanding.
 
 ### Using the Application
 
