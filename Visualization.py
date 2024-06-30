@@ -8,7 +8,7 @@ import matplotlib.colors as mcolors
 import nasa
 import webbrowser
 import threading
-from datetime import date
+
 
 # Initialize the Dash app with Bootstrap styles for a responsive and visually appealing layout
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
