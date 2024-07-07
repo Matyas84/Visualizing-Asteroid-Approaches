@@ -50,13 +50,12 @@ Tab Instructions are included on each tab for guidance and further understanding
 1. **Clone the Repository**: Start by cloning the repository to your local machine.
 
     ```bash
-    git clone https://github.com/yourusername/Project_Horák_Lebeda.git
+    git clone https://github.com/Matyas84/Visualizing-Asteroid-Approaches.git
     ```
 
-2. **Install Dependencies**: Navigate to the project directory and install the required dependencies using pip.
+2. **Install Dependencies**: Open the folder you chose as your desired destination in Visual Studio Code and install the required dependencies using pip in your terminal.
 
     ```bash
-    cd Project_Horák_Lebeda
     pip install -r requirements.txt
     ```
 
@@ -67,6 +66,10 @@ Tab Instructions are included on each tab for guidance and further understanding
     ```
 
 4. **Access the Application**: Web browser with the interactive dashboard will be opened automatically. Alternatively, you can use the link in the terminal or open your web browser and go to `http://127.0.0.1:8050/`.
+
+5. **Key insert**: You will have to obtain your own API key via https://api.nasa.gov/. To generate your API Key fill in the required fields, namely your first name, last name, email and optionally how you intend to use the API and then click the signup button. Your API key will be e-mailed to you. Insert your API key into the insert column on top of the the dash application.
+
+6. **Using the Application** Follow the instructions on the dash app to use individual pages. You will always start by selecting the desired dates.
 
 ## Concluding remarks
 
