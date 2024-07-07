@@ -1,9 +1,6 @@
 import requests
 import pandas as pd
 import datetime
-#key: XwVHPFh2zHGkoQZ3QmLtDqyncNjhdloY07lr9868
-
-
 
 #request to the NASA API to retrieve data about near-Earth objects for a specified date range.
 def request_nasa(start_date: str, end_date: str, key:str):
